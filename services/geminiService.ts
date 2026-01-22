@@ -1,6 +1,6 @@
 
-import { GoogleGenAI, Type, Modality, GenerateContentResponse } from "@google/genai";
-import { MODELS } from "../constants";
+import { GoogleGenAI, Modality } from "@google/genai";
+import { MODELS } from "../constants.tsx";
 
 export const decodeBase64 = (base64: string) => {
   const binaryString = atob(base64);
@@ -42,9 +42,11 @@ export class GeminiService {
   private ai: GoogleGenAI;
 
   constructor() {
-    const apiKey = process.env.API_KEY;
+    // Safety check for process.env in browser environments
+    const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : (window as any).API_KEY;
+    
     if (!apiKey) {
-      console.error("CRITICAL: process.env.API_KEY is not defined. Ensure it is set in your deployment environment (e.g., Vercel Variables).");
+      console.warn("API_KEY not found in environment. Ensure process.env.API_KEY is configured in Vercel.");
     }
     this.ai = new GoogleGenAI({ apiKey: apiKey || '' });
   }
@@ -98,6 +100,7 @@ export class GeminiService {
   }
 
   async generateVideo(prompt: string, aspectRatio: '16:9' | '9:16' = '16:9') {
+    const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : (window as any).API_KEY;
     let operation = await this.ai.models.generateVideos({
       model: MODELS.MOTION,
       prompt,
@@ -114,7 +117,7 @@ export class GeminiService {
     }
 
     const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-    const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+    const response = await fetch(`${downloadLink}&key=${apiKey}`);
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   }
@@ -157,7 +160,7 @@ export class GeminiService {
         },
         inputAudioTranscription: {},
         outputAudioTranscription: {},
-        systemInstruction: 'You are Nitram, a professional AI. Stay concise.'
+        systemInstruction: 'You are Nitram, a professional AI assistant.'
       }
     });
   }

@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { GeminiService } from '../../services/geminiService';
+import { GeminiService } from '../../services/geminiService.ts';
 
 interface VisionModuleProps {
   addLog: (method: string, status: 'pending' | 'success' | 'error', duration?: number) => void;
@@ -98,8 +98,6 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
         {result ? (
           <div className="w-full h-full p-8 flex items-center justify-center group relative">
              <img src={result} alt="Generated" className="max-w-full max-h-full rounded-lg shadow-2xl border border-neutral-700 transition-transform duration-500 group-hover:scale-[1.02]" />
-             
-             {/* Floating download shortcut */}
              <button 
                onClick={handleDownload}
                className="absolute top-12 right-12 bg-blue-600 p-3 rounded-full text-white shadow-xl opacity-0 group-hover:opacity-100 transition-all hover:scale-110 active:scale-95"
@@ -114,18 +112,6 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
               <i className="fas fa-image text-3xl text-neutral-600"></i>
             </div>
             <p className="text-neutral-500 text-sm">Visual creation will appear here</p>
-          </div>
-        )}
-        
-        {loading && (
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <div className="relative w-16 h-16 mx-auto">
-                <div className="absolute inset-0 border-4 border-blue-600/20 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-t-blue-600 rounded-full animate-spin"></div>
-              </div>
-              <p className="text-sm font-medium animate-pulse">Nitram is painting your pixels...</p>
-            </div>
           </div>
         )}
       </div>

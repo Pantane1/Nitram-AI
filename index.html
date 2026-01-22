@@ -29,6 +29,10 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #444;
         }
+        /* Custom scrollbar for message containers */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
     </style>
 <script type="importmap">
 {
@@ -43,5 +47,7 @@
 </head>
 <body>
     <div id="root"></div>
+    <!-- Entry point for the application -->
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>

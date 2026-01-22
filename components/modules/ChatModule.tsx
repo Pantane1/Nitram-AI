@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Message } from '../../types';
-import { GeminiService } from '../../services/geminiService';
+import { Message } from '../../types.ts';
+import { GeminiService } from '../../services/geminiService.ts';
 
 interface ChatModuleProps {
   addLog: (method: string, status: 'pending' | 'success' | 'error', duration?: number) => void;

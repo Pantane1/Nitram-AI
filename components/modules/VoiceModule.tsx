@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { GeminiService, decodeBase64, encodeBase64, decodeAudioData } from '../../services/geminiService';
+import { GeminiService, decodeBase64, encodeBase64, decodeAudioData } from '../../services/geminiService.ts';
 
 interface VoiceModuleProps {
   addLog: (method: string, status: 'pending' | 'success' | 'error', duration?: number) => void;
@@ -68,7 +68,6 @@ const VoiceModule: React.FC<VoiceModuleProps> = ({ addLog }) => {
               mimeType: 'audio/pcm;rate=16000'
             };
 
-            // CRITICAL: Always use the resolved promise to send data to avoid race conditions
             if (sessionPromiseRef.current) {
               sessionPromiseRef.current.then((session) => {
                 session.sendRealtimeInput({ media: pcmBlob });
@@ -164,27 +163,16 @@ const VoiceModule: React.FC<VoiceModuleProps> = ({ addLog }) => {
       </div>
 
       <div className="flex flex-col items-center space-y-6 shrink-0">
-        <div className="relative group">
-          {isActive && (
-            <div className="absolute -inset-4">
-              <div className="absolute inset-0 border-2 border-blue-500 rounded-full animate-ping opacity-20"></div>
-              <div className="absolute inset-0 border-2 border-blue-400 rounded-full animate-ping opacity-10 [animation-delay:0.5s]"></div>
-            </div>
-          )}
-          
-          <button 
-            onClick={isActive ? stopSession : startSession}
-            className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl shadow-2xl transition-all relative z-10 active:scale-90 group-hover:scale-105 ${
-              isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-500'
-            }`}
-          >
-            <i className={`fas ${isActive ? 'fa-stop' : 'fa-microphone'} text-white`}></i>
-          </button>
-        </div>
-
+        <button 
+          onClick={isActive ? stopSession : startSession}
+          className={`w-20 h-20 rounded-full flex items-center justify-center text-2xl shadow-2xl transition-all relative z-10 ${
+            isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-500'
+          }`}
+        >
+          <i className={`fas ${isActive ? 'fa-stop' : 'fa-microphone'} text-white`}></i>
+        </button>
         <div className="text-center">
-          <h3 className="text-lg font-bold tracking-tight">{isActive ? 'Syncing with Nitram' : 'Start Voice Sync'}</h3>
-          <p className="text-neutral-500 text-[10px] mt-1 uppercase tracking-widest font-semibold">Gemini 2.5 Native Audio Engine</p>
+          <h3 className="text-lg font-bold">{isActive ? 'Nitram Syncing...' : 'Start Voice Sync'}</h3>
         </div>
       </div>
     </div>

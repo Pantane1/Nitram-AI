@@ -1,15 +1,14 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { AIView, Message, OperationLog, GeneratedAsset } from './types';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
-import ChatModule from './components/modules/ChatModule';
-import VisionModule from './components/modules/VisionModule';
-import MotionModule from './components/modules/MotionModule';
-import VoiceModule from './components/modules/VoiceModule';
-import MapsModule from './components/modules/MapsModule';
-import MonitoringPanel from './components/MonitoringPanel';
-import { GeminiService } from './services/geminiService';
+import React, { useState, useCallback } from 'react';
+import { AIView, OperationLog } from './types.ts';
+import Sidebar from './components/Sidebar.tsx';
+import Header from './components/Header.tsx';
+import ChatModule from './components/modules/ChatModule.tsx';
+import VisionModule from './components/modules/VisionModule.tsx';
+import MotionModule from './components/modules/MotionModule.tsx';
+import VoiceModule from './components/modules/VoiceModule.tsx';
+import MapsModule from './components/modules/MapsModule.tsx';
+import MonitoringPanel from './components/MonitoringPanel.tsx';
 
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<AIView>(AIView.CHAT);
