@@ -42,7 +42,11 @@ export class GeminiService {
   private ai: GoogleGenAI;
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      console.error("CRITICAL: process.env.API_KEY is not defined. Ensure it is set in your deployment environment (e.g., Vercel Variables).");
+    }
+    this.ai = new GoogleGenAI({ apiKey: apiKey || '' });
   }
 
   public static refresh() {
@@ -50,7 +54,6 @@ export class GeminiService {
   }
 
   async chatWithGrounding(message: string, history: any[] = []) {
-    // Constructing history-aware contents
     const contents = history.map(h => ({
       role: h.role === 'user' ? 'user' : 'model',
       parts: [{ text: h.content }]
@@ -154,7 +157,7 @@ export class GeminiService {
         },
         inputAudioTranscription: {},
         outputAudioTranscription: {},
-        systemInstruction: 'You are Nitram, a charismatic and professional AI assistant. Respond with helpfulness and wit. Keep voice replies concise for natural turn-taking.'
+        systemInstruction: 'You are Nitram, a professional AI. Stay concise.'
       }
     });
   }

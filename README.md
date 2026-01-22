@@ -1,62 +1,79 @@
-# Nitram AI Suite 🚀
+# ⚡ Nitram AI Suite
 
-Nitram AI Suite is an advanced, multi-modal AI workspace designed for professionals and creators. Built with the latest Gemini 3 and 2.5 series models, it provides a unified interface for reasoning, visual creation, cinematic motion, and real-time voice interaction.
+**Nitram AI Suite** is a high-performance, multi-modal creative workspace powered by Google Gemini. It bridges the gap between complex reasoning, cinematic generation, and natural voice interaction within a single, unified professional interface.
 
-## ✨ Core Features
-
-### 💬 Chat Grounding (Gemini 3 Pro)
-*   **Real-time Intelligence**: Integrated Google Search grounding for up-to-the-minute information.
-*   **Rich Citations**: Automated source extraction and linking for verified information.
-*   **Complex Reasoning**: Powered by Gemini 3 Pro for advanced logic and coding tasks.
-
-### 🎨 Vision Lab (Gemini 3 Pro Image)
-*   **Professional Generation**: High-fidelity image creation with aspect ratio controls.
-*   **Pro Mode**: Toggle between speed (Flash) and quality (Pro) for your creative needs.
-*   **Instant Downloads**: Save your creations locally with one click.
-
-### 🎬 Motion Studio (Veo 3.1)
-*   **Cinematic Video**: Generate 720p cinematic sequences from text prompts.
-*   **Flexible Ratios**: Support for 16:9 (Landscape) and 9:16 (Portrait) assets.
-*   **Paid Key Support**: Integrated flow for selecting specific billing-enabled API keys for Veo operations.
-
-### 🎙️ Voice Sync (Gemini 2.5 Native Audio)
-*   **Human-like Interaction**: Low-latency, real-time audio conversation using the Native Audio API.
-*   **Natural Responses**: Continuous stream of high-quality PCM audio for a fluid conversational experience.
-
-### 🌍 Geo Finder (Gemini 2.5 Maps)
-*   **Location Awareness**: Browser-based geolocation integration for relevant local results.
-*   **Interactive Links**: Direct links to Google Maps for restaurants, landmarks, and businesses.
-
-## 🛠️ Tech Stack
-
--   **Frontend**: React 19 (ESM), Tailwind CSS
--   **Icons**: FontAwesome 6, Material Symbols
--   **AI Core**: `@google/genai` (Google Generative AI SDK)
--   **Audio**: Web Audio API (ScriptProcessor & AudioBufferSource)
-
-## 🚀 Getting Started
-
-### Prerequisites
--   A Google AI Studio API Key.
--   For Video generation, a paid GCP project is required via the selection dialog.
-
-### Environment Configuration
-The application expects the following environment variable to be available:
-```javascript
-process.env.API_KEY // Your Gemini API Key
-```
-
-## 📐 Architecture
-
-The app is built with a modular architecture:
--   `GeminiService`: A centralized wrapper for all AI interactions.
--   `AIView`: Enum-based state management for switching between workspace modules.
--   `MonitoringPanel`: A real-time log of API operations, status codes, and latency tracking.
-
-## 🛡️ Security & Performance
--   **Privacy-First**: No personal data is stored; all AI interactions happen directly through the SDK.
--   **Optimized Rendering**: Lazy-loaded modules and CSS-based animations for a smooth 60FPS UI.
--   **Error Handling**: Robust retry logic and graceful degradation for API limitations.
+![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
+![Powered By](https://img.shields.io/badge/powered%20by-Gemini%20API-orange?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
 ---
-*Built with curiosity by Wamuhu Martin.*
+
+## 🌟 Core Intelligence Modules
+
+### 💬 Chat Grounding (Gemini 3 Pro)
+*   **Contextual Reasoning**: Deep logic and code generation capabilities.
+*   **Search Integration**: Live Google Search grounding with automated source extraction and link generation.
+*   **Rich Citations**: Every grounded claim is backed by verified web references.
+
+### 🎙️ Voice Sync (Gemini 2.5 Native Audio)
+*   **Low-Latency Conversation**: Real-time, continuous audio streaming for natural turn-taking.
+*   **Native Multi-Modality**: Processes audio directly without intermediate text conversion for higher emotional fidelity.
+*   **Live Transcripts**: Real-time visualization of the verbal exchange.
+
+### 🎨 Vision Lab (Gemini 3 Pro Image)
+*   **Professional Synthesis**: High-resolution image generation with manual Quality vs. Speed toggles.
+*   **Pro Mode**: Access the high-fidelity Gemini 3 Pro Image model for publication-ready assets.
+*   **One-Click Export**: Integrated download manager for all visual creations.
+
+### 🎬 Motion Studio (Veo 3.1)
+*   **Cinematic Video**: Text-to-Video generation using the state-of-the-art Veo 3.1 model.
+*   **Aspect Control**: Support for both Landscape (16:9) and Portrait (9:16) cinematic outputs.
+*   **Billed Key Support**: Secure flow for enterprise/paid project API key selection.
+
+### 🌍 Geo Finder (Gemini 2.5 Maps)
+*   **Spatial Grounding**: Integrated Google Maps tool for local discovery and navigation.
+*   **Coordinate Awareness**: Browser-based geolocation support for ultra-relevant local results.
+
+---
+
+## 🛠️ Technical Implementation
+
+-   **Frontend Engine**: React 19 (ES6 Modules)
+-   **Styling**: Tailwind CSS with custom glassmorphism components.
+-   **SDK**: `@google/genai` (Official Google Generative AI SDK).
+-   **Audio**: Web Audio API with PCM stream decoding and scheduling.
+
+---
+
+## 🚀 Deployment Guide
+
+### Setting up on Vercel
+
+1.  **Fork the Repository** to your GitHub account.
+2.  **Create a New Project** in Vercel and import your fork.
+3.  **Environment Variables**:
+    *   Navigate to *Project Settings > Environment Variables*.
+    *   Add `API_KEY`: Your Google AI Studio API Key.
+4.  **Permissions**:
+    *   Ensure your browser permissions allow Microphone and Geolocation for the deployed domain.
+
+### Running Locally
+
+```bash
+# Clone the repo
+git clone https://github.com/yourusername/nitram-ai-suite.git
+
+# Set your API Key in your local environment
+export API_KEY=your_key_here
+
+# Open index.html in a modern browser (use a local server like Live Server)
+```
+
+## 📐 Monitoring & Performance
+The built-in **Operations Log** (accessible via the activity icon in the header) tracks:
+*   API Method latency (ms).
+*   Request status (Success/Pending/Error).
+*   Operation timestamps for auditing performance.
+
+---
+*Developed by Wamuhu Martin. Built for the future of AI workflows.*
