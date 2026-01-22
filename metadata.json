@@ -1,0 +1,9 @@
+{
+  "name": "Nitram AI Suite",
+  "description": "An advanced multi-modal AI workspace featuring real-time voice interaction, professional image generation, Veo-powered video creation, and search-grounded reasoning.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
