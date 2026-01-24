@@ -1,5 +1,4 @@
-
-import React, { useState, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { GeminiService } from '../../services/geminiService.ts';
 
 interface VisionModuleProps {
@@ -11,7 +10,8 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
   const [isPro, setIsPro] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const gemini = useRef(new GeminiService());
+  
+  const gemini = useMemo(() => new GeminiService(), []);
 
   const handleGenerate = async () => {
     if (!prompt.trim() || loading) return;
@@ -21,7 +21,7 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
     addLog(`gemini.generateImage (${isPro ? 'Pro' : 'Fast'})`, 'pending');
 
     try {
-      const url = await gemini.current.generateImage(prompt, isPro);
+      const url = await gemini.generateImage(prompt, isPro);
       setResult(url);
       addLog(`gemini.generateImage (${isPro ? 'Pro' : 'Fast'})`, 'success', Date.now() - startTime);
     } catch (error) {
@@ -58,7 +58,7 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
         <div className="space-y-4">
           <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest">Settings</label>
           <div className="flex items-center justify-between p-3 bg-neutral-900 border border-neutral-800 rounded-xl">
-            <span className="text-sm">High Quality (Pro)</span>
+            <span className="text-sm text-neutral-300">High Quality (Pro)</span>
             <button 
               onClick={() => setIsPro(!isPro)}
               className={`w-12 h-6 rounded-full transition-colors relative ${isPro ? 'bg-blue-600' : 'bg-neutral-700'}`}

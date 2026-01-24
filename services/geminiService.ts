@@ -38,12 +38,18 @@ export const decodeAudioData = async (
 };
 
 export class GeminiService {
-  private ai: GoogleGenAI;
+  private _ai: GoogleGenAI | null = null;
 
-  constructor() {
-    // Directly use process.env.API_KEY. 
-    // The window.process shim in index.html ensures this doesn't throw a ReferenceError.
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  private get ai(): GoogleGenAI {
+    if (!this._ai) {
+      const apiKey = process.env.API_KEY;
+      if (!apiKey) {
+        throw new Error("API_KEY is not defined in the environment. Please set it in Vercel settings.");
+      }
+      // Create a fresh instance right before use
+      this._ai = new GoogleGenAI({ apiKey });
+    }
+    return this._ai;
   }
 
   public static refresh() {
@@ -95,7 +101,8 @@ export class GeminiService {
   }
 
   async generateVideo(prompt: string, aspectRatio: '16:9' | '9:16' = '16:9') {
-    let operation = await this.ai.models.generateVideos({
+    const client = this.ai;
+    let operation = await client.models.generateVideos({
       model: MODELS.MOTION,
       prompt,
       config: {
@@ -107,7 +114,7 @@ export class GeminiService {
 
     while (!operation.done) {
       await new Promise(resolve => setTimeout(resolve, 10000));
-      operation = await this.ai.operations.getVideosOperation({ operation });
+      operation = await client.operations.getVideosOperation({ operation });
     }
 
     const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
