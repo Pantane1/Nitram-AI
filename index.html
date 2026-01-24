@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nitram AI Suite</title>
-    <!-- Custom Favicon based on provided logo -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%233b82f6'/%3E%3Cpath d='M18 5L9 18h6l-2 10 11-14h-6l2-9z' fill='white'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,20 +17,49 @@
             overflow: hidden;
         }
         #root:empty::before {
-            content: 'Initializing Suite...';
+            content: 'INITIALIZING SUITE...';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #444;
-            font-size: 0.875rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
+            color: #333;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            font-weight: 700;
+        }
+        /* Error Overlay Style */
+        #error-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            color: #ef4444;
+            padding: 2rem;
+            z-index: 9999;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow: auto;
         }
     </style>
     <script>
-        // Shim for process.env to prevent ReferenceErrors in browser
-        window.process = window.process || { env: { API_KEY: "" } };
+        // Catch early errors for debugging Vercel deployments
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            const overlay = document.getElementById('error-overlay');
+            if (overlay) {
+                overlay.style.display = 'block';
+                overlay.textContent += `Error: ${msg}\nAt: ${url}:${lineNo}:${columnNo}\n\n`;
+            }
+            return false;
+        };
+
+        // Shim process.env for the browser
+        window.process = { 
+            env: { 
+                // Vercel doesn't expose these to static files automatically. 
+                // If you see a warning in the app, check your Vercel settings.
+                API_KEY: "" 
+            } 
+        };
     </script>
 <script type="importmap">
 {
@@ -39,7 +67,7 @@
     "react": "https://esm.sh/react@19.0.0",
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "@google/genai": "https://esm.sh/@google/genai@1.34.0",
+    "@google/genai": "https://esm.sh/@google/genai@1.34.0?deps=react@19.0.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/"
   }
@@ -47,6 +75,7 @@
 </script>
 </head>
 <body>
+    <div id="error-overlay"></div>
     <div id="root"></div>
     <script type="module" src="./index.tsx"></script>
 </body>

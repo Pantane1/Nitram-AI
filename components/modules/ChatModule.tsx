@@ -1,5 +1,4 @@
-
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Message } from '../../types.ts';
 import { GeminiService } from '../../services/geminiService.ts';
 
@@ -14,7 +13,9 @@ const ChatModule: React.FC<ChatModuleProps> = ({ addLog }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const gemini = useRef(new GeminiService());
+  
+  // Lazy-initialize GeminiService to avoid overhead/crashes in the render phase
+  const gemini = useMemo(() => new GeminiService(), []);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -34,7 +35,7 @@ const ChatModule: React.FC<ChatModuleProps> = ({ addLog }) => {
     addLog('gemini.chatWithGrounding', 'pending');
 
     try {
-      const result = await gemini.current.chatWithGrounding(input, currentHistory);
+      const result = await gemini.chatWithGrounding(input, currentHistory);
       const assistantMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -50,7 +51,7 @@ const ChatModule: React.FC<ChatModuleProps> = ({ addLog }) => {
       setMessages(prev => [...prev, {
         id: 'err',
         role: 'assistant',
-        content: 'I encountered an issue while searching. Please try again in a moment.',
+        content: 'I encountered an issue while searching. Please verify your API Key in Vercel settings.',
         timestamp: Date.now()
       }]);
     } finally {

@@ -1,5 +1,4 @@
-
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { AIView, OperationLog } from './types.ts';
 import Sidebar from './components/Sidebar.tsx';
 import Header from './components/Header.tsx';
@@ -15,6 +14,14 @@ const App: React.FC = () => {
   const [logs, setLogs] = useState<OperationLog[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMonitoringOpen, setIsMonitoringOpen] = useState(false);
+  const [isKeyMissing, setIsKeyMissing] = useState(false);
+
+  useEffect(() => {
+    // Check if API_KEY is actually set (not just the shimmed empty string)
+    if (!process.env.API_KEY || process.env.API_KEY === "") {
+      setIsKeyMissing(true);
+    }
+  }, []);
   
   const addLog = useCallback((method: string, status: 'pending' | 'success' | 'error', duration?: number) => {
     const newLog: OperationLog = {
@@ -28,7 +35,13 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex h-screen bg-[#0a0a0a] text-gray-100 overflow-hidden">
+    <div className="flex h-screen bg-[#0a0a0a] text-gray-100 overflow-hidden relative">
+      {isKeyMissing && (
+        <div className="absolute inset-x-0 top-0 z-[100] bg-red-600 text-white text-[10px] font-bold py-1 px-4 text-center animate-pulse">
+          WARNING: API_KEY is not configured in Vercel Environment Variables. AI features will not function.
+        </div>
+      )}
+
       <Sidebar 
         activeView={activeView} 
         onViewChange={setActiveView} 
