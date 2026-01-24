@@ -20,8 +20,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, isOpen, tog
   return (
     <aside className={`${isOpen ? 'w-64' : 'w-20'} transition-all duration-300 bg-[#0a0a0a] flex flex-col border-r border-neutral-800 shrink-0`}>
       <div className="p-6 flex items-center gap-3">
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
-          <i className="fas fa-bolt text-white text-sm"></i>
+        {/* Updated to rounded-full to match the circle logo in the request */}
+        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shrink-0 shadow-lg shadow-blue-600/20">
+          <i className="fas fa-bolt text-white text-xs"></i>
         </div>
         {isOpen && <span className="font-bold text-lg tracking-tight">Nitram</span>}
       </div>
