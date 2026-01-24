@@ -17,15 +17,15 @@
             overflow: hidden;
         }
         #root:empty::before {
-            content: 'INITIALIZING SUITE...';
+            content: 'NITRAM AI SUITE';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #333;
+            color: #1a1a1a;
             font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            font-weight: 700;
+            letter-spacing: 0.5em;
+            font-weight: 900;
         }
         #error-overlay {
             display: none;
@@ -41,21 +41,16 @@
         }
     </style>
     <script>
-        // Catch and display critical startup errors
         window.onerror = function(msg, url, lineNo, columnNo, error) {
-            // Ignore minor react internal errors or common browser extension noise
             if (msg.includes('ResizeObserver') || msg.includes('Extension')) return false;
-            
             const overlay = document.getElementById('error-overlay');
             if (overlay) {
                 overlay.style.display = 'block';
-                const timestamp = new Date().toLocaleTimeString();
                 overlay.innerHTML = `
                     <div style="border-bottom: 1px solid #333; padding-bottom: 1rem; margin-bottom: 1rem;">
-                        <h2 style="margin: 0; font-size: 1.25rem;">Runtime Exception [${timestamp}]</h2>
+                        <h2 style="margin: 0; font-size: 1.25rem;">Runtime Exception</h2>
                     </div>
                     <p style="color: #fff;">${msg}</p>
-                    <p style="opacity: 0.5; font-size: 0.8rem;">Location: ${url}:${lineNo}:${columnNo}</p>
                     <div style="margin-top: 2rem;">
                         <button onclick="location.reload()" style="background: #333; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Retry Boot</button>
                     </div>
@@ -63,9 +58,7 @@
             }
             return false;
         };
-
-        // Ensure process.env is defined to avoid ReferenceErrors
-        // But do NOT initialize a dummy key here as it causes the SDK to throw "invalid key" early
+        // Ensure process.env is defined to avoid ReferenceErrors in the browser environment
         window.process = window.process || { env: {} };
     </script>
 <script type="importmap">

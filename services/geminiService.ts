@@ -38,18 +38,16 @@ export const decodeAudioData = async (
 };
 
 export class GeminiService {
-  private _ai: GoogleGenAI | null = null;
-
-  private get ai(): GoogleGenAI {
-    if (!this._ai) {
-      const apiKey = process.env.API_KEY;
-      if (!apiKey) {
-        throw new Error("API_KEY is not defined in the environment. Please set it in Vercel settings.");
-      }
-      // Create a fresh instance right before use
-      this._ai = new GoogleGenAI({ apiKey });
+  /**
+   * Always create a new client instance before making a call to ensure we use 
+   * the latest API key from the aistudio selection dialog or environment.
+   */
+  private getClient(): GoogleGenAI {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      throw new Error("Missing API Key. Please ensure a key is connected via the initialization screen.");
     }
-    return this._ai;
+    return new GoogleGenAI({ apiKey });
   }
 
   public static refresh() {
@@ -57,13 +55,14 @@ export class GeminiService {
   }
 
   async chatWithGrounding(message: string, history: any[] = []) {
+    const ai = this.getClient();
     const contents = history.map(h => ({
       role: h.role === 'user' ? 'user' : 'model',
       parts: [{ text: h.content }]
     }));
     contents.push({ role: 'user', parts: [{ text: message }] });
 
-    const response = await this.ai.models.generateContent({
+    const response = await ai.models.generateContent({
       model: MODELS.CHAT,
       contents: contents as any,
       config: {
@@ -83,8 +82,9 @@ export class GeminiService {
   }
 
   async generateImage(prompt: string, isPro: boolean = false) {
+    const ai = this.getClient();
     const model = isPro ? MODELS.VISION_PRO : MODELS.VISION_FAST;
-    const response = await this.ai.models.generateContent({
+    const response = await ai.models.generateContent({
       model,
       contents: { parts: [{ text: prompt }] },
       config: {
@@ -101,8 +101,8 @@ export class GeminiService {
   }
 
   async generateVideo(prompt: string, aspectRatio: '16:9' | '9:16' = '16:9') {
-    const client = this.ai;
-    let operation = await client.models.generateVideos({
+    const ai = this.getClient();
+    let operation = await ai.models.generateVideos({
       model: MODELS.MOTION,
       prompt,
       config: {
@@ -114,23 +114,25 @@ export class GeminiService {
 
     while (!operation.done) {
       await new Promise(resolve => setTimeout(resolve, 10000));
-      operation = await client.operations.getVideosOperation({ operation });
+      operation = await ai.operations.getVideosOperation({ operation });
     }
 
     const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-    const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+    const apiKey = process.env.API_KEY;
+    const response = await fetch(`${downloadLink}&key=${apiKey}`);
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   }
 
   async getMapGrounding(query: string, lat?: number, lng?: number) {
+    const ai = this.getClient();
     const toolConfig = lat && lng ? {
       retrievalConfig: {
         latLng: { latitude: lat, longitude: lng }
       }
     } : undefined;
 
-    const response = await this.ai.models.generateContent({
+    const response = await ai.models.generateContent({
       model: MODELS.MAPS,
       contents: query,
       config: {
@@ -151,7 +153,8 @@ export class GeminiService {
   }
 
   connectLive(callbacks: any) {
-    return this.ai.live.connect({
+    const ai = this.getClient();
+    return ai.live.connect({
       model: MODELS.VOICE,
       callbacks,
       config: {
