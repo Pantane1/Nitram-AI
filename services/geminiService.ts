@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Modality } from "@google/genai";
 import { MODELS } from "../constants.tsx";
 
@@ -42,13 +41,9 @@ export class GeminiService {
   private ai: GoogleGenAI;
 
   constructor() {
-    // Safety check for process.env in browser environments
-    const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : (window as any).API_KEY;
-    
-    if (!apiKey) {
-      console.warn("API_KEY not found in environment. Ensure process.env.API_KEY is configured in Vercel.");
-    }
-    this.ai = new GoogleGenAI({ apiKey: apiKey || '' });
+    // Directly use process.env.API_KEY. 
+    // The window.process shim in index.html ensures this doesn't throw a ReferenceError.
+    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   }
 
   public static refresh() {
@@ -100,7 +95,6 @@ export class GeminiService {
   }
 
   async generateVideo(prompt: string, aspectRatio: '16:9' | '9:16' = '16:9') {
-    const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : (window as any).API_KEY;
     let operation = await this.ai.models.generateVideos({
       model: MODELS.MOTION,
       prompt,
@@ -117,7 +111,7 @@ export class GeminiService {
     }
 
     const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-    const response = await fetch(`${downloadLink}&key=${apiKey}`);
+    const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   }

@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { AIView } from '../types';
+import { AIView } from '../types.ts';
 
 interface SidebarProps {
   activeView: AIView;
@@ -19,15 +18,15 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, isOpen, tog
   ];
 
   return (
-    <aside className={`${isOpen ? 'w-64' : 'w-20'} transition-all duration-300 bg-[#0a0a0a] flex flex-col border-r border-neutral-800`}>
+    <aside className={`${isOpen ? 'w-64' : 'w-20'} transition-all duration-300 bg-[#0a0a0a] flex flex-col border-r border-neutral-800 shrink-0`}>
       <div className="p-6 flex items-center gap-3">
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
           <i className="fas fa-bolt text-white text-sm"></i>
         </div>
         {isOpen && <span className="font-bold text-lg tracking-tight">Nitram</span>}
       </div>
 
-      <nav className="flex-1 px-3 space-y-1">
+      <nav className="flex-1 px-3 space-y-1 overflow-y-auto overflow-x-hidden">
         {menuItems.map((item) => (
           <button
             key={item.id}
@@ -38,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, isOpen, tog
                 : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
             }`}
           >
-            <i className={`fas ${item.icon} text-lg w-6`}></i>
+            <i className={`fas ${item.icon} text-lg w-6 shrink-0`}></i>
             {isOpen && <span className="truncate">{item.label}</span>}
           </button>
         ))}
@@ -49,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, isOpen, tog
           onClick={toggle}
           className="w-full flex items-center gap-4 px-4 py-3 text-neutral-500 hover:text-white transition-colors"
         >
-          <i className={`fas ${isOpen ? 'fa-angles-left' : 'fa-angles-right'} text-lg w-6`}></i>
+          <i className={`fas ${isOpen ? 'fa-angles-left' : 'fa-angles-right'} text-lg w-6 shrink-0`}></i>
           {isOpen && <span>Collapse</span>}
         </button>
       </div>
