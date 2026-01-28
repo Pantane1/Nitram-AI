@@ -38,20 +38,17 @@ export const decodeAudioData = async (
 };
 
 export class GeminiService {
-  /**
-   * Always create a new client instance before making a call to ensure we use 
-   * the latest API key from the aistudio selection dialog or environment.
-   */
   private getClient(): GoogleGenAI {
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
-      throw new Error("Missing API Key. Please ensure a key is connected via the initialization screen.");
+      throw new Error("Missing API Key. Please ensure a key is connected.");
     }
     return new GoogleGenAI({ apiKey });
   }
 
-  public static refresh() {
-    return new GeminiService();
+  public static isPermissionError(error: any): boolean {
+    const msg = error?.message?.toLowerCase() || "";
+    return msg.includes("permission") || msg.includes("403") || msg.includes("billing");
   }
 
   async chatWithGrounding(message: string, history: any[] = []) {
@@ -97,7 +94,7 @@ export class GeminiService {
         return `data:image/png;base64,${part.inlineData.data}`;
       }
     }
-    throw new Error("No image was generated.");
+    throw new Error("No image data found in response.");
   }
 
   async generateVideo(prompt: string, aspectRatio: '16:9' | '9:16' = '16:9') {
@@ -120,6 +117,7 @@ export class GeminiService {
     const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
     const apiKey = process.env.API_KEY;
     const response = await fetch(`${downloadLink}&key=${apiKey}`);
+    if (!response.ok) throw new Error("Failed to download video asset.");
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   }

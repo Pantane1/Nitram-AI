@@ -10,6 +10,7 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
   const [isPro, setIsPro] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   const gemini = useMemo(() => new GeminiService(), []);
 
@@ -17,6 +18,7 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
     if (!prompt.trim() || loading) return;
     setLoading(true);
     setResult(null);
+    setError(null);
     const startTime = Date.now();
     addLog(`gemini.generateImage (${isPro ? 'Pro' : 'Fast'})`, 'pending');
 
@@ -24,9 +26,14 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
       const url = await gemini.generateImage(prompt, isPro);
       setResult(url);
       addLog(`gemini.generateImage (${isPro ? 'Pro' : 'Fast'})`, 'success', Date.now() - startTime);
-    } catch (error) {
-      console.error(error);
+    } catch (err: any) {
+      console.error(err);
       addLog('gemini.generateImage', 'error');
+      if (GeminiService.isPermissionError(err)) {
+        setError(`Permission Denied: Pro models require a paid GCP project. ${isPro ? 'Try disabling Pro mode or check your key.' : 'Check your API project settings.'}`);
+      } else {
+        setError("Failed to generate image. Please try a different prompt.");
+      }
     } finally {
       setLoading(false);
     }
@@ -49,7 +56,10 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
           <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest">Prompt</label>
           <textarea
             value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            onChange={(e) => {
+                setPrompt(e.target.value);
+                setError(null);
+            }}
             placeholder="A futuristic cybernetic tiger in a neon rainforest..."
             className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 h-40 focus:outline-none focus:border-blue-600 resize-none text-sm leading-relaxed"
           />
@@ -60,7 +70,10 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
           <div className="flex items-center justify-between p-3 bg-neutral-900 border border-neutral-800 rounded-xl">
             <span className="text-sm text-neutral-300">High Quality (Pro)</span>
             <button 
-              onClick={() => setIsPro(!isPro)}
+              onClick={() => {
+                  setIsPro(!isPro);
+                  setError(null);
+              }}
               className={`w-12 h-6 rounded-full transition-colors relative ${isPro ? 'bg-blue-600' : 'bg-neutral-700'}`}
             >
               <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isPro ? 'left-7' : 'left-1'}`}></div>
@@ -69,6 +82,12 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
         </div>
 
         <div className="space-y-3 mt-auto">
+          {error && (
+            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs leading-relaxed animate-in fade-in slide-in-from-bottom-2">
+              <i className="fas fa-circle-exclamation mr-2"></i>
+              {error}
+            </div>
+          )}
           <button 
             onClick={handleGenerate}
             disabled={loading || !prompt.trim()}
@@ -109,9 +128,9 @@ const VisionModule: React.FC<VisionModuleProps> = ({ addLog }) => {
         ) : (
           <div className="text-center space-y-4">
             <div className="w-20 h-20 rounded-full bg-neutral-800 flex items-center justify-center mx-auto border border-neutral-700">
-              <i className="fas fa-image text-3xl text-neutral-600"></i>
+              <i className={`fas ${loading ? 'fa-wand-sparkles fa-beat' : 'fa-image'} text-3xl text-neutral-600`}></i>
             </div>
-            <p className="text-neutral-500 text-sm">Visual creation will appear here</p>
+            <p className="text-neutral-500 text-sm">{loading ? 'Synthesizing your vision...' : 'Visual creation will appear here'}</p>
           </div>
         )}
       </div>
